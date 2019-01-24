@@ -12,4 +12,6 @@ public interface List {
 
     // renvoie vrai si et seulement si la séquence est vide
     boolean isEmpty();
+
+    int get(int pos);
 }

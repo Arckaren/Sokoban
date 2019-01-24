@@ -57,7 +57,11 @@ public class LinkedList implements List {
 
     @Override
     public void addTail(int element) {
-        getTail().setNext(new Cell(element));
+        if (!isEmpty()) {
+            getTail().setNext(new Cell(element));
+        } else {
+            addHead(element);
+        }
     }
 
     @Override
@@ -74,6 +78,15 @@ public class LinkedList implements List {
     @Override
     public boolean isEmpty() {
         return head == null;
+    }
+
+    @Override
+    public int get(int pos) {
+        Cell tmp = head;
+        for (int i = 0; i < pos; i++) {
+            tmp = tmp.getNext();
+        }
+        return tmp.getData();
     }
 
     @Override
