@@ -1,9 +1,10 @@
+import java.util.Arrays;
 
 /**
  * ArrayList
  */
 public class ArrayList implements List {
-    public final static int DEFAULT_SIZE = 100;
+    public final static int DEFAULT_SIZE = 2;
     private Integer[] tab = new Integer[DEFAULT_SIZE];
     /**
      * effective number of elements
@@ -15,25 +16,30 @@ public class ArrayList implements List {
 
     @Override
     public void addHead(int element) {
-        if (canAdd()) {
-            if (!isEmpty()) {
-                begin = modAccess(begin - 1);
-            }
-            tab[begin] = element;
-            size++;
-        } else {
-            throw new RuntimeException("Plus de place dans le tableau (SIZEMAX : " + DEFAULT_SIZE + ")");
+        if (!canAdd()) {
+            growTab();
         }
+        if (!isEmpty()) {
+            begin = modAccess(begin - 1);
+        }
+        tab[begin] = element;
+        size++;
     }
 
     @Override
     public void addTail(int element) {
         if (!canAdd()) {
-            throw new RuntimeException("Plus de place dans le tableau (SIZEMAX : " + DEFAULT_SIZE + ")");
-        } else {
-            tab[end()] = element;
-            size++;
+            growTab();
         }
+        tab[end()] = element;
+        size++;
+    }
+
+    private void growTab() {
+        Integer tabTmp[] = Arrays.copyOfRange(tab, begin, tab.length * 2 + begin - 1);
+        System.arraycopy(tab, 0, tabTmp, tab.length - begin, begin);
+        tab = tabTmp;
+        begin = 0;
     }
 
     @Override
