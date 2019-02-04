@@ -1,3 +1,8 @@
+import structures.ArrayList;
+import structures.ArrayListFactory;
+import structures.LinkedListFactory;
+import structures.List;
+import structures.ListFactory;
 
 /**
  * TestList
@@ -9,7 +14,8 @@ public class TestList {
         }
     }
 
-    public static void test(List list, int nbElemMax) {
+    public static void test(ListFactory listFact, int nbElemMax) {
+        List list = listFact.create();
         System.out.println("List:");
         System.out.println(list);
         doAssert(list.isEmpty(), "La liste n'est pas vide");
@@ -83,11 +89,11 @@ public class TestList {
 
     public static void main(String[] args) {
         System.out.println("Debut du test de la liste chainée");
-        List linkedList = new LinkedList();
+        ListFactory linkedList = new LinkedListFactory();
         test(linkedList, 100);
         System.out.println("Fin du test de la liste chainée");
         System.out.println("Debut du test de la liste tableau");
-        List arrayList = new ArrayList();
+        ListFactory arrayList = new ArrayListFactory();
         test(arrayList, ArrayList.DEFAULT_SIZE);
         System.out.println("Fin du test de la liste tableau");
     }

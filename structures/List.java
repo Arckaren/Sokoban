@@ -1,3 +1,4 @@
+package structures;
 
 public interface List {
     // insère l'élément element en début de séquence (en première position)
