@@ -1,6 +1,6 @@
 package structures;
 
-public interface List {
+public interface List extends Iterable<Integer> {
     // insère l'élément element en début de séquence (en première position)
     void addHead(int element);
 

@@ -1,5 +1,7 @@
 package structures;
 
+import java.util.Iterator;
+
 /**
  * Cell
  */
@@ -116,6 +118,25 @@ public class LinkedList implements List {
             }
             return tmp;
         }
+    }
+
+    @Override
+    public Iterator<Integer> iterator() {
+        return new LinkedListIterator(this);
+    }
+
+    /**
+     * @return the head
+     */
+    protected Cell getHead() {
+        return head;
+    }
+
+    /**
+     * @param head the head to set
+     */
+    protected void setHead(Cell head) {
+        this.head = head;
     }
 
 }

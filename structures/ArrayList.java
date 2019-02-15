@@ -1,6 +1,7 @@
 package structures;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * ArrayList
@@ -77,9 +78,38 @@ public class ArrayList implements List {
         }
     }
 
+    protected void remove(int pos) {
+        for (int i = pos; i < getSize() - 1; i++) {
+            this.set(i, get(i + 1));
+        }
+        size--;
+    }
+
+    private void checkPos(int pos) {
+        if (!(pos >= 0 && pos < getSize())) {
+            throw new IndexOutOfBoundsException("index " + pos + " not in bounds");
+        }
+    }
+
+    /**
+     * get la valeur à la position pos
+     * 
+     * as if return "tab[pos]"
+     */
     @Override
     public int get(int pos) {
+        checkPos(pos);
         return tab[modAccess(pos + begin)];
+    }
+
+    /**
+     * set la valeur val à l'indice pos
+     * 
+     * as if "tab[pos]=val"
+     */
+    protected void set(int pos, int val) {
+        checkPos(pos);
+        tab[modAccess(pos + begin)] = val;
     }
 
     @Override
@@ -93,5 +123,14 @@ public class ArrayList implements List {
         }
         listStr += "]";
         return listStr;
+    }
+
+    protected int getSize() {
+        return size;
+    }
+
+    @Override
+    public Iterator<Integer> iterator() {
+        return new ArrayListIterator(this);
     }
 }
