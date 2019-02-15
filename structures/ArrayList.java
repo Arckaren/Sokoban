@@ -6,9 +6,9 @@ import java.util.Iterator;
 /**
  * ArrayList
  */
-public class ArrayList implements List {
+public class ArrayList<Type> implements List<Type> {
     public final static int DEFAULT_SIZE = 2;
-    private Integer[] tab = new Integer[DEFAULT_SIZE];
+    private Object[] tab = new Object[DEFAULT_SIZE];
     /**
      * effective number of elements
      */
@@ -18,7 +18,7 @@ public class ArrayList implements List {
     private int begin = 0;
 
     @Override
-    public void addHead(int element) {
+    public void addHead(Object element) {
         if (!canAdd()) {
             growTab();
         }
@@ -30,7 +30,7 @@ public class ArrayList implements List {
     }
 
     @Override
-    public void addTail(int element) {
+    public void addTail(Object element) {
         if (!canAdd()) {
             growTab();
         }
@@ -39,19 +39,20 @@ public class ArrayList implements List {
     }
 
     private void growTab() {
-        Integer tabTmp[] = Arrays.copyOfRange(tab, begin, tab.length * 2 + begin - 1);
+        Object tabTmp[] = Arrays.copyOfRange(tab, begin, tab.length * 2 + begin - 1);
         System.arraycopy(tab, 0, tabTmp, tab.length - begin, begin);
         tab = tabTmp;
         begin = 0;
     }
 
     @Override
-    public int popHead() {
+    @SuppressWarnings("unchecked")
+    public Type popHead() {
         if (!isEmpty()) {
             int tmpBegin = begin;
             begin = modAccess(begin + 1);
             size--;
-            return tab[tmpBegin];
+            return (Type) tab[tmpBegin];
         } else {
             throw new RuntimeException("La liste est vide");
         }
@@ -97,9 +98,10 @@ public class ArrayList implements List {
      * as if return "tab[pos]"
      */
     @Override
-    public int get(int pos) {
+    @SuppressWarnings("unchecked")
+    public Type get(int pos) {
         checkPos(pos);
-        return tab[modAccess(pos + begin)];
+        return (Type) tab[modAccess(pos + begin)];
     }
 
     /**
@@ -107,7 +109,7 @@ public class ArrayList implements List {
      * 
      * as if "tab[pos]=val"
      */
-    protected void set(int pos, int val) {
+    protected void set(int pos, Type val) {
         checkPos(pos);
         tab[modAccess(pos + begin)] = val;
     }
@@ -130,7 +132,7 @@ public class ArrayList implements List {
     }
 
     @Override
-    public Iterator<Integer> iterator() {
-        return new ArrayListIterator(this);
+    public Iterator<Type> iterator() {
+        return new ArrayListIterator<Type>(this);
     }
 }

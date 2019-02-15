@@ -5,11 +5,11 @@ import java.util.Iterator;
 /**
  * LinkedListIterator
  */
-public class ArrayListIterator implements Iterator<Integer> {
-	ArrayList al;
+public class ArrayListIterator<Type> implements Iterator<Type> {
+	ArrayList<Type> al;
 	int currPos;
 
-	protected ArrayListIterator(ArrayList list) {
+	protected ArrayListIterator(ArrayList<Type> list) {
 		al = list;
 		currPos = -1;
 	}
@@ -20,7 +20,7 @@ public class ArrayListIterator implements Iterator<Integer> {
 	}
 
 	@Override
-	public Integer next() {
+	public Type next() {
 		currPos++;
 		return al.get(currPos);
 	}

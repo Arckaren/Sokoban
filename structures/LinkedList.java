@@ -5,32 +5,32 @@ import java.util.Iterator;
 /**
  * Cell
  */
-class Cell {
-    private int data;
-    private Cell next;
+class Cell<Type> {
+    private Type data;
+    private Cell<Type> next;
 
-    Cell(int data) {
+    Cell(Type data) {
         this.data = data;
     }
 
     /**
      * @param next the next to set
      */
-    public void setNext(Cell next) {
+    public void setNext(Cell<Type> next) {
         this.next = next;
     }
 
     /**
      * @return the next
      */
-    public Cell getNext() {
+    public Cell<Type> getNext() {
         return next;
     }
 
     /**
      * @return the data
      */
-    public int getData() {
+    public Type getData() {
         return data;
     }
 
@@ -44,33 +44,33 @@ class Cell {
 /**
  * LinkedList
  */
-public class LinkedList implements List {
-    private Cell head;
+public class LinkedList<Type> implements List<Type> {
+    private Cell<Type> head;
 
     LinkedList() {
         head = null;
     }
 
     @Override
-    public void addHead(int element) {
-        Cell newHead = new Cell(element);
+    public void addHead(Type element) {
+        Cell<Type> newHead = new Cell<>(element);
         newHead.setNext(head);
         head = newHead;
     }
 
     @Override
-    public void addTail(int element) {
+    public void addTail(Type element) {
         if (!isEmpty()) {
-            getTail().setNext(new Cell(element));
+            getTail().setNext(new Cell<>(element));
         } else {
             addHead(element);
         }
     }
 
     @Override
-    public int popHead() {
+    public Type popHead() {
         if (head != null) {
-            Cell oldHead = head;
+            Cell<Type> oldHead = head;
             head = head.getNext();
             return oldHead.getData();
         } else {
@@ -84,8 +84,8 @@ public class LinkedList implements List {
     }
 
     @Override
-    public int get(int pos) {
-        Cell tmp = head;
+    public Type get(int pos) {
+        Cell<Type> tmp = head;
         for (int i = 0; i < pos; i++) {
             tmp = tmp.getNext();
         }
@@ -95,7 +95,7 @@ public class LinkedList implements List {
     @Override
     public String toString() {
         String listStr = "[";
-        Cell tmp = head;
+        Cell<Type> tmp = head;
         while (tmp != null) {
             listStr += tmp;
             if (tmp.getNext() != null) {
@@ -107,11 +107,11 @@ public class LinkedList implements List {
         return listStr;
     }
 
-    private Cell getTail() {
+    private Cell<Type> getTail() {
         if (isEmpty()) {
             return null;
         } else {
-            Cell tmp;
+            Cell<Type> tmp;
             tmp = head;
             while (tmp.getNext() != null) {
                 tmp = tmp.getNext();
@@ -121,21 +121,21 @@ public class LinkedList implements List {
     }
 
     @Override
-    public Iterator<Integer> iterator() {
-        return new LinkedListIterator(this);
+    public Iterator<Type> iterator() {
+        return new LinkedListIterator<Type>(this);
     }
 
     /**
      * @return the head
      */
-    protected Cell getHead() {
+    protected Cell<Type> getHead() {
         return head;
     }
 
     /**
      * @param head the head to set
      */
-    protected void setHead(Cell head) {
+    protected void setHead(Cell<Type> head) {
         this.head = head;
     }
 

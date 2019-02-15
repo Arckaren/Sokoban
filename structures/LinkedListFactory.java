@@ -6,7 +6,7 @@ package structures;
 public class LinkedListFactory implements ListFactory {
 
 	@Override
-	public List create() {
-		return new LinkedList();
+	public <Type> List<Type> create() {
+		return new LinkedList<Type>();
 	}
 }

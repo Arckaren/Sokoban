@@ -5,13 +5,13 @@ import java.util.Iterator;
 /**
  * LinkedListIterator
  */
-public class LinkedListIterator implements Iterator<Integer> {
-	Cell prec;
-	Cell curr;
-	Cell nxt;
-	LinkedList ll;
+public class LinkedListIterator<Type> implements Iterator<Type> {
+	Cell<Type> prec;
+	Cell<Type> curr;
+	Cell<Type> nxt;
+	LinkedList<Type> ll;
 
-	protected LinkedListIterator(LinkedList list) {
+	protected LinkedListIterator(LinkedList<Type> list) {
 		prec = null;
 		curr = null;
 		nxt = list.getHead();
@@ -24,7 +24,7 @@ public class LinkedListIterator implements Iterator<Integer> {
 	}
 
 	@Override
-	public Integer next() {
+	public Type next() {
 		prec = curr;
 		curr = nxt;
 		nxt = nxt.getNext();

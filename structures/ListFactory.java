@@ -4,5 +4,5 @@ package structures;
  * ListFactory
  */
 public interface ListFactory {
-	List create();
+	<Type> List<Type> create();
 }

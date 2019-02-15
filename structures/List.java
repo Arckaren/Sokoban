@@ -1,18 +1,18 @@
 package structures;
 
-public interface List extends Iterable<Integer> {
+public interface List<Type> extends Iterable<Type> {
     // insère l'élément element en début de séquence (en première position)
-    void addHead(int element);
+    void addHead(Type element);
 
     // insère l'élément element en fin de séquence (en dernière position)
-    void addTail(int element);
+    void addTail(Type element);
 
     // extrait et renvoie la valeur de l'élément situé en début de séquence (en
     // première position)
-    int popHead();
+    Type popHead();
 
     // renvoie vrai si et seulement si la séquence est vide
     boolean isEmpty();
 
-    int get(int pos);
+    Type get(int pos);
 }

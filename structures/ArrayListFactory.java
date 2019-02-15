@@ -5,7 +5,7 @@ package structures;
  */
 public class ArrayListFactory implements ListFactory {
 	@Override
-	public List create() {
-		return new ArrayList();
+	public <Type> List<Type> create() {
+		return new ArrayList<Type>();
 	}
 }

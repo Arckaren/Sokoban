@@ -15,7 +15,7 @@ public class TestList {
     }
 
     public static void test(ListFactory listFact, int nbElemMax) {
-        List list = listFact.create();
+        List<Integer> list = listFact.create();
         System.out.println("List:");
         System.out.println(list);
         doAssert(list.isEmpty(), "La liste n'est pas vide");

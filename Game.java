@@ -23,7 +23,7 @@ public class Game {
 		lvlPrinter.print(lvls.get(0));
 
 		ListFactory lF = conf.getListFactory();
-		List l = lF.create();
+		List<Integer> l = lF.create();
 
 		l.addHead(4);
 		int elem = l.popHead();
