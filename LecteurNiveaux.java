@@ -4,7 +4,7 @@ import java.util.ArrayList;
  * Main
  */
 
-public class Main {
+public class LecteurNiveaux {
     public static void main(String[] args) {
         LevelReader lvlReader = new LevelReader(args[0]);
         Level lvl = lvlReader.readNextLevel();

@@ -12,8 +12,8 @@ public class LevelPrinter {
     }
 
     public void print(Level lvl) {
-        lvl.forEach((Character elem, int row, int col, int nbRow, int nbCol) -> {
-            out.print(elem);
+        lvl.forEach((Tile elem, int row, int col, int nbRow, int nbCol) -> {
+            out.print(elem.getChar());
             if (col == nbCol - 1) {
                 out.println();
             }

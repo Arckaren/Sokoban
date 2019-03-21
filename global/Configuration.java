@@ -52,12 +52,16 @@ public class Configuration {
 		}
 	}
 
+	public InputStream load(String src) {
+		return ClassLoader.getSystemClassLoader().getResourceAsStream(src);
+	}
+
 	private Configuration() {
 		InputStream reader;
 		File fich = new File(System.getProperty("user.home"), ".armoroides");
 
 		try {
-			reader = ClassLoader.getSystemClassLoader().getResourceAsStream("defaut.cfg");
+			reader = load("defaut.cfg");
 			prop = new Properties();
 			prop.load(reader);
 			if (fich.exists()) {
