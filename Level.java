@@ -62,7 +62,7 @@ class Level {
     int getNbRows() {
         return tiles.size();
     }
-    
+
     int getNbCols() {
         return tiles.get(0).size();
     }

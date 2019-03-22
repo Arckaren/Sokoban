@@ -48,12 +48,18 @@ public class Game extends Application {
 		System.out.println("Size: " + tileSz);
 
 		l.forEach((Tile elem, int row, int col, int nbRow, int nbCol) -> {
-			InputStream is = conf.load("Images/" + elem.getImg());
 			if (col == 0) {
 				box.getChildren().add(new HBox());
 			}
-			ImageView iv = new ImageView(new Image(is, tileSz, tileSz, true, true));
-			((HBox) box.getChildren().get(box.getChildren().size() - 1)).getChildren().add(iv);
+
+			InputStream isFloor = conf.load("Images/" + Tile.FLOOR.getImg());
+			Pane pn = new Pane(new ImageView(new Image(isFloor, tileSz, tileSz, true, true)));
+			if (!elem.equals(Tile.FLOOR)) {
+				InputStream is = conf.load("Images/" + elem.getImg());
+				pn.getChildren().add(new ImageView(new Image(is, tileSz, tileSz, true, true)));
+			}
+
+			((HBox) box.getChildren().get(box.getChildren().size() - 1)).getChildren().add(pn);
 		});
 
 		System.out.println(
