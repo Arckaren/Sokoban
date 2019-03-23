@@ -10,11 +10,17 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
+import javafx.scene.control.Button;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
 import javafx.stage.Stage;
 import structures.List;
 import structures.ListFactory;
@@ -25,7 +31,8 @@ import structures.ListFactory;
 public class Game extends Application {
 	ArrayList<Level> lvls;
 	int curLvl;
-	VBox box;
+	VBox vB;
+	FlowPane vue;
 	Configuration conf;
 	private Stage stage;
 
@@ -48,13 +55,14 @@ public class Game extends Application {
 
 	void drawLevel() {
 		Level l = lvls.get(curLvl);
-		box.getChildren().clear();
-		double tileSz = Math.min((stage.getWidth()) / l.getNbCols(), (stage.getHeight()) / l.getNbRows());
+		vB.getChildren().clear();
+
+		double tileSz = Math.min((vB.getWidth()) / l.getNbCols(), (vB.getHeight()) / l.getNbRows());
 		System.out.println("Size: " + tileSz);
 
 		l.forEach((Tile elem, int row, int col, int nbRow, int nbCol) -> {
 			if (col == 0) {
-				box.getChildren().add(new HBox());
+				vB.getChildren().add(new HBox());
 			}
 			InputStream isFloor = conf.load("Images/" + Tile.FLOOR.getImg());
 			Pane pn = new Pane(new ImageView(new Image(isFloor)));
@@ -63,14 +71,14 @@ public class Game extends Application {
 				pn.getChildren().add(new ImageView(new Image(is)));
 			}
 
-			((HBox) box.getChildren().get(box.getChildren().size() - 1)).getChildren().add(pn);
+			((HBox) vB.getChildren().get(vB.getChildren().size() - 1)).getChildren().add(pn);
 			pn.setOnMouseClicked(event -> {
 				System.out.println("Click on position : " + col + "," + row);
 			});
 		});
 
 		System.out.println(
-				"size2: " + box.getChildren().size() + ", " + ((HBox) box.getChildren().get(0)).getChildren().size());
+				"size2: " + vB.getChildren().size() + ", " + ((HBox) vB.getChildren().get(0)).getChildren().size());
 
 	}
 
@@ -80,19 +88,27 @@ public class Game extends Application {
 		primaryStage.setTitle("Sokoban");
 		primaryStage.setOnCloseRequest(we -> System.out.println("Fin du jeu"));
 
-		box = new VBox();
+		vB = new VBox();
+		vue = new FlowPane(vB);
+		Button but = new Button("Next Level");
+		but.setMaxWidth(10);
+		VBox buttons = new VBox(but);
+		buttons.setMaxWidth(12);
+		vue.getChildren().add(buttons);
 
-		Scene s = new Scene(box);
+		Scene s = new Scene(vue);
 
 		primaryStage.setScene(s);
 		primaryStage.setWidth(800);
 		primaryStage.setHeight(700);
-
+		
 		ChangeListener<Number> resizeListener = (observable, oldValue, newValue) -> {
 			Level l = lvls.get(curLvl);
-			double tileSz = Math.min((stage.getWidth()) / l.getNbCols(), (stage.getHeight()) / l.getNbRows());
+			double tileSz = Math.min((vB.getWidth()) / l.getNbCols(), (vB.getHeight()) / l.getNbRows());
 			System.out.println("Size: " + tileSz);
-			box.getChildren().forEach((n) -> {
+			System.out.println("vB Size: " + vB.getWidth() + ", " + vB.getHeight());
+
+			vB.getChildren().forEach((n) -> {
 				((HBox) n).getChildren().forEach((n2) -> {
 					((Pane) n2).getChildren().forEach((n3) -> {
 						((ImageView) n3).setFitWidth(tileSz);
