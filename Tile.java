@@ -1,11 +1,11 @@
 
 enum Tile {
-	FLOOR(' ', "Ground/ground_05.png"), //
-	GOAL('.', "Environment/environment_15.png"), //
-	PLAYER('@', "Player/player_03.png"), //
+	FLOOR(' ', "Ground/ground_04.png"), //
+	GOAL('.', "Environment/environment_03.png"), //
+	PLAYER('@', "Player/player_21.png"), //
 	PLAYER_GOAL('+', ""), //
-	WALL('#', "Blocks/block_03.png"), //
-	BOX('$', "Crates/crate_04.png"), //
+	WALL('#', "Blocks/block_06.png"), //
+	BOX('$', "Crates/crate_09.png"), //
 	BOX_GOAL('*', "Crates/crate_39.png");
 
 	private char c;
