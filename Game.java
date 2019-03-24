@@ -53,11 +53,14 @@ public class Game extends Application {
 	}
 
 	void drawLevel() {
+
 		Level l = lvls.get(curLvl);
+		conf.logger().info("Drawing level " + (curLvl + 1) + "/" + lvls.size());
 		vB.getChildren().clear();
 
-		double tileSz = Math.min((getTerrainWidth()) / l.getNbCols(), (getTerrainHeight()) / l.getNbRows());
-		System.out.println("Size: " + tileSz);
+		// double tileSz = Math.min((getTerrainWidth()) / l.getNbCols(),
+		// (getTerrainHeight()) / l.getNbRows());
+		// System.out.println("Size: " + tileSz);
 
 		l.forEach((Tile elem, int row, int col, int nbRow, int nbCol) -> {
 			if (col == 0) {
@@ -70,15 +73,33 @@ public class Game extends Application {
 				pn.getChildren().add(new ImageView(new Image(is)));
 			}
 
+			// FIXME: handle player on goal
+
 			((HBox) vB.getChildren().get(vB.getChildren().size() - 1)).getChildren().add(pn);
 			pn.setOnMouseClicked(event -> {
 				System.out.println("Click on position : " + col + "," + row);
 			});
 		});
 
-		System.out
-				.println("size2: " + vB.getChildren().size() + ", " + ((HBox) vB.getChildren().get(0)).getChildren().size());
+		fixSize();
+	}
 
+	void fixSize() {
+		Level l = lvls.get(curLvl);
+		double tileSz = Math.min((getTerrainWidth()) / l.getNbCols(), (getTerrainHeight()) / l.getNbRows());
+
+		vB.getChildren().forEach((n) -> {
+			((HBox) n).getChildren().forEach((n2) -> {
+				((Pane) n2).getChildren().forEach((n3) -> {
+					((ImageView) n3).setFitWidth(tileSz);
+					((ImageView) n3).setFitHeight(tileSz);
+				});
+			});
+		});
+	}
+
+	boolean hasNextLvl() {
+		return (curLvl + 1 < lvls.size());
 	}
 
 	@Override
@@ -91,28 +112,24 @@ public class Game extends Application {
 		vue = new VBox(vB);
 		Button but = new Button("Next Level");
 		buttons = new BorderPane(but);
+		but.setOnMouseClicked(event -> {
+			curLvl++;
+			drawLevel();
+			but.setDisable(!hasNextLvl());
+		});
+
+		but.setDisable(!hasNextLvl());
+
 		buttons.setMinHeight(45);
 		vue.getChildren().add(buttons);
-		Scene s = new Scene(vue);
 
+		Scene s = new Scene(vue);
 		primaryStage.setScene(s);
 		primaryStage.setWidth(800);
 		primaryStage.setHeight(700);
 
 		ChangeListener<Number> resizeListener = (observable, oldValue, newValue) -> {
-			Level l = lvls.get(curLvl);
-			double tileSz = Math.min((getTerrainWidth()) / l.getNbCols(), (getTerrainHeight()) / l.getNbRows());
-			System.out.println("Size: " + tileSz);
-			System.out.println("vB Size: " + getTerrainWidth() + ", " + getTerrainHeight());
-
-			vB.getChildren().forEach((n) -> {
-				((HBox) n).getChildren().forEach((n2) -> {
-					((Pane) n2).getChildren().forEach((n3) -> {
-						((ImageView) n3).setFitWidth(tileSz);
-						((ImageView) n3).setFitHeight(tileSz);
-					});
-				});
-			});
+			fixSize();
 		};
 
 		primaryStage.widthProperty().addListener(resizeListener);

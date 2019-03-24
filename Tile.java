@@ -3,7 +3,7 @@ enum Tile {
 	FLOOR(' ', "Ground/ground_04.png"), //
 	GOAL('.', "Environment/environment_03.png"), //
 	PLAYER('@', "Player/player_21.png"), //
-	PLAYER_GOAL('+', ""), //
+	PLAYER_GOAL('+', "Environment/environment_03.png"), //
 	WALL('#', "Blocks/block_06.png"), //
 	BOX('$', "Crates/crate_09.png"), //
 	BOX_GOAL('*', "Crates/crate_39.png");
