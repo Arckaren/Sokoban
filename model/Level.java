@@ -1,6 +1,8 @@
+package model;
+
 import java.util.ArrayList;
 
-class Level {
+public class Level {
     /**
      * LevelLoop
      */
@@ -59,19 +61,19 @@ class Level {
         }
     }
 
-    int getNbRows() {
+    public int getNbRows() {
         return tiles.size();
     }
 
-    int getNbCols() {
+    public int getNbCols() {
         return tiles.get(0).size();
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    Tile get(int row, int col) {
+    public Tile get(int row, int col) {
         return tiles.get(row).get(col);
     }
 

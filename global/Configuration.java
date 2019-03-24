@@ -10,6 +10,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import model.Tile;
 import structures.ArrayListFactory;
 import structures.LinkedListFactory;
 import structures.ListFactory;
@@ -54,6 +55,11 @@ public class Configuration {
 
 	public InputStream load(String src) {
 		return ClassLoader.getSystemClassLoader().getResourceAsStream(src);
+	}
+
+	public InputStream loadImage(Tile t) {
+		// logger().info("laoding: " + "Images/" + get(t.getImgLabel()));
+		return load("Images/" + get(t.getImgLabel()));
 	}
 
 	private Configuration() {

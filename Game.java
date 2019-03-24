@@ -14,6 +14,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import model.Level;
+import model.LevelReader;
+import model.Tile;
 
 /**
  * Game
@@ -52,6 +55,27 @@ public class Game extends Application {
 		return stage.getHeight() - buttons.getHeight();
 	}
 
+	Pane createPaneForTile(Tile t) {
+		InputStream is = conf.loadImage(Tile.FLOOR);
+		Pane pn = new Pane(new ImageView(new Image(is)));
+		if (!t.equals(Tile.FLOOR)) {
+			switch (t) {
+			case PLAYER_GOAL:
+				is = conf.loadImage(Tile.GOAL);
+				pn.getChildren().add(new ImageView(new Image(is)));
+				is = conf.loadImage(Tile.PLAYER);
+				pn.getChildren().add(new ImageView(new Image(is)));
+				break;
+			default:
+				is = conf.loadImage(t);
+				pn.getChildren().add(new ImageView(new Image(is)));
+				break;
+			}
+		}
+
+		return pn;
+	}
+
 	void drawLevel() {
 
 		Level l = lvls.get(curLvl);
@@ -66,14 +90,8 @@ public class Game extends Application {
 			if (col == 0) {
 				vB.getChildren().add(new HBox());
 			}
-			InputStream isFloor = conf.load("Images/" + Tile.FLOOR.getImg());
-			Pane pn = new Pane(new ImageView(new Image(isFloor)));
-			if (!elem.equals(Tile.FLOOR)) {
-				InputStream is = conf.load("Images/" + elem.getImg());
-				pn.getChildren().add(new ImageView(new Image(is)));
-			}
 
-			// FIXME: handle player on goal
+			Pane pn = createPaneForTile(elem);
 
 			((HBox) vB.getChildren().get(vB.getChildren().size() - 1)).getChildren().add(pn);
 			pn.setOnMouseClicked(event -> {
