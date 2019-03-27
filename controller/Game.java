@@ -8,14 +8,17 @@ import java.util.Observer;
 import global.Configuration;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import model.Coord;
 import model.InvalidMoveException;
@@ -32,7 +35,7 @@ public class Game extends Application implements Observer {
 	int curLvl;
 	VBox vB;
 	VBox vue;
-	BorderPane buttons;
+	HBox buttons;
 	Configuration conf;
 	private Stage stage;
 
@@ -95,6 +98,16 @@ public class Game extends Application implements Observer {
 		return pn;
 	}
 
+	void GG() {
+		vB.getChildren().clear();
+		Label label = new Label("Bravo !");
+		label.setTextFill(Color.web("#144d0b"));
+		label.setFont(Font.font(20));
+		HBox labelBox = new HBox(label);
+		labelBox.setAlignment(Pos.CENTER);
+		vB.getChildren().add(labelBox);
+	}
+
 	void drawLevel() {
 		Level l = lvls.get(curLvl);
 		l.addObserver(this);
@@ -117,6 +130,9 @@ public class Game extends Application implements Observer {
 				System.out.println("Click on position : " + row + "," + col);
 				try {
 					l.movePusher(new Coord(row, col));
+					if (l.isCompleted()) {
+						GG();
+					}
 				} catch (InvalidMoveException e) {
 					System.out.println("MAAAAAAAIS: " + e.getMessage());
 				}
@@ -152,8 +168,9 @@ public class Game extends Application implements Observer {
 
 		vB = new VBox();
 		vue = new VBox(vB);
-		Button but = new Button("Next Level");
-		buttons = new BorderPane(but);
+		vue.setAlignment(Pos.CENTER);
+		Button but = new Button("Next Level >");
+		buttons = new HBox(but);
 		but.setOnMouseClicked(event -> {
 			curLvl++;
 			drawLevel();
@@ -163,6 +180,7 @@ public class Game extends Application implements Observer {
 		but.setDisable(!hasNextLvl());
 
 		buttons.setMinHeight(45);
+		buttons.setAlignment(Pos.CENTER);
 		vue.getChildren().add(buttons);
 
 		Scene s = new Scene(vue);
