@@ -69,10 +69,10 @@ public class Coord {
 	public Coord add(Direction d) {
 		switch (d) {
 		case LEFT:
-			++col;
+			--col;
 			break;
 		case RIGHT:
-			--col;
+			++col;
 			break;
 		case BOTTOM:
 			++row;

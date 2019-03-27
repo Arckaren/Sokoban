@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -21,6 +22,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import model.Coord;
+import model.Direction;
 import model.InvalidMoveException;
 import model.Level;
 import model.LevelReader;
@@ -32,7 +34,8 @@ import model.Tile;
  */
 public class Game extends Application implements Observer {
 	ArrayList<Level> lvls;
-	int curLvl;
+	int curLvlI;
+	Level l;
 	VBox vB;
 	VBox vue;
 	HBox buttons;
@@ -46,7 +49,7 @@ public class Game extends Application implements Observer {
 	@Override
 	public void init() throws Exception {
 		conf = Configuration.getInstance();
-		curLvl = 0;
+		curLvlI = -1;
 		LevelReader lvReader = new LevelReader(conf.load("Original.txt"));
 		lvls = new ArrayList<>();
 		Level lvl;
@@ -54,6 +57,7 @@ public class Game extends Application implements Observer {
 			lvls.add(lvl);
 		}
 		conf.logger().info("nb levels read: " + lvls.size());
+		nextLevel();
 	}
 
 	double getTerrainWidth() {
@@ -68,16 +72,19 @@ public class Game extends Application implements Observer {
 		HBox ln = (HBox) vB.getChildren().get(c.getRow());
 		return (Pane) ln.getChildren().get(c.getCol());
 	}
-
-	void move(Coord from, Coord to) {
-		Pane pn = getPane(from);
-		ImageView iv = (ImageView) pn.getChildren().get(pn.getChildren().size() - 1);
-		pn.getChildren().remove(iv);
-		pn = getPane(to);
-		pn.getChildren().add(iv);
+	
+	void setTile(Coord c, Tile t) {
+		HBox ln = (HBox) vB.getChildren().get(c.getRow());
+		ln.getChildren().set(c.getCol(), createPaneForTile(t, c));
+		fixSize();
 	}
 
-	Pane createPaneForTile(Tile t) {
+	void move(Coord from, Coord to) {
+		setTile(from, l.get(from));
+		setTile(to, l.get(to));
+	}
+
+	Pane createPaneForTile(Tile t, Coord c) {
 		InputStream is = conf.loadImage(Tile.FLOOR);
 		Pane pn = new Pane(new ImageView(new Image(is)));
 		if (!t.equals(Tile.FLOOR)) {
@@ -95,23 +102,45 @@ public class Game extends Application implements Observer {
 			}
 		}
 
+		pn.setOnMouseClicked(event -> {
+			System.out.println("Click on position : " + c);
+			try {
+				l.movePusher(c);
+				GGTest();
+			} catch (InvalidMoveException e) {
+				System.out.println("MAAAAAAAIS: " + e.getMessage());
+			}
+		});
+
 		return pn;
 	}
 
-	void GG() {
-		vB.getChildren().clear();
-		Label label = new Label("Bravo !");
-		label.setTextFill(Color.web("#144d0b"));
-		label.setFont(Font.font(20));
-		HBox labelBox = new HBox(label);
-		labelBox.setAlignment(Pos.CENTER);
-		vB.getChildren().add(labelBox);
+	void GGTest() {
+		if (l.isCompleted()) {
+			vB.getChildren().clear();
+			Label label = new Label("Bravo !");
+			label.setTextFill(Color.web("#144d0b"));
+			label.setFont(Font.font(20));
+			HBox labelBox = new HBox(label);
+			labelBox.setAlignment(Pos.CENTER);
+			vB.getChildren().add(labelBox);
+		}
+	}
+
+	void nextLevel() {
+		curLvlI++;
+		l = lvls.get(curLvlI).clone();
+		l.addObserver(this);
+	}
+
+	void reset() {
+		l.deleteObservers();
+		l = lvls.get(curLvlI).clone();
+		l.addObserver(this);
 	}
 
 	void drawLevel() {
-		Level l = lvls.get(curLvl);
-		l.addObserver(this);
-		conf.logger().info("Drawing level " + (curLvl + 1) + "/" + lvls.size());
+		conf.logger().info("Drawing level " + (curLvlI + 1) + "/" + lvls.size());
 		vB.getChildren().clear();
 
 		// double tileSz = Math.min((getTerrainWidth()) / l.getNbCols(),
@@ -121,29 +150,19 @@ public class Game extends Application implements Observer {
 		l.forEach((Tile elem, int row, int col, int nbRow, int nbCol) -> {
 			if (col == 0) {
 				vB.getChildren().add(new HBox());
+				System.out.println("");
 			}
+			System.out.print(elem.getChar());
 
-			Pane pn = createPaneForTile(elem);
+			Pane pn = createPaneForTile(elem, new Coord(row, col));
 
 			((HBox) vB.getChildren().get(vB.getChildren().size() - 1)).getChildren().add(pn);
-			pn.setOnMouseClicked(event -> {
-				System.out.println("Click on position : " + row + "," + col);
-				try {
-					l.movePusher(new Coord(row, col));
-					if (l.isCompleted()) {
-						GG();
-					}
-				} catch (InvalidMoveException e) {
-					System.out.println("MAAAAAAAIS: " + e.getMessage());
-				}
-			});
 		});
 
 		fixSize();
 	}
 
 	void fixSize() {
-		Level l = lvls.get(curLvl);
 		double tileSz = Math.min((getTerrainWidth()) / l.getNbCols(), (getTerrainHeight()) / l.getNbRows());
 
 		vB.getChildren().forEach((n) -> {
@@ -157,7 +176,7 @@ public class Game extends Application implements Observer {
 	}
 
 	boolean hasNextLvl() {
-		return (curLvl + 1 < lvls.size());
+		return (curLvlI + 1 < lvls.size());
 	}
 
 	@Override
@@ -169,15 +188,22 @@ public class Game extends Application implements Observer {
 		vB = new VBox();
 		vue = new VBox(vB);
 		vue.setAlignment(Pos.CENTER);
-		Button but = new Button("Next Level >");
-		buttons = new HBox(but);
-		but.setOnMouseClicked(event -> {
-			curLvl++;
+		Button butNextLvl = new Button("Next Level >");
+		Button butReset = new Button("Reload");
+
+		buttons = new HBox(butNextLvl, butReset);
+		butNextLvl.setOnMouseClicked(event -> {
+			nextLevel();
 			drawLevel();
-			but.setDisable(!hasNextLvl());
+			butNextLvl.setDisable(!hasNextLvl());
 		});
 
-		but.setDisable(!hasNextLvl());
+		butReset.setOnMouseClicked(event -> {
+			reset();
+			drawLevel();
+		});
+
+		butNextLvl.setDisable(!hasNextLvl());
 
 		buttons.setMinHeight(45);
 		buttons.setAlignment(Pos.CENTER);
@@ -187,6 +213,24 @@ public class Game extends Application implements Observer {
 		primaryStage.setScene(s);
 		primaryStage.setWidth(800);
 		primaryStage.setHeight(700);
+
+		vue.setOnKeyPressed(event -> {
+			KeyCode code = event.getCode();
+			try {
+				if (code == KeyCode.RIGHT) {
+					l.movePusher(Direction.RIGHT);
+				} else if (code == KeyCode.LEFT) {
+					l.movePusher(Direction.LEFT);
+				} else if (code == KeyCode.UP) {
+					l.movePusher(Direction.TOP);
+				} else if (code == KeyCode.DOWN) {
+					l.movePusher(Direction.BOTTOM);
+				}
+				GGTest();
+			} catch (InvalidMoveException e) {
+				System.out.println("MAAAAAAAIS: " + e.getMessage());
+			}
+		});
 
 		ChangeListener<Number> resizeListener = (observable, oldValue, newValue) -> {
 			fixSize();

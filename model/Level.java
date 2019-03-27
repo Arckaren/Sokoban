@@ -70,7 +70,7 @@ public class Level extends Observable {
     public boolean isCompleted() {
         for (ArrayList<Tile> line : tiles) {
             for (Tile tile : line) {
-                if (tile == Tile.GOAL) {
+                if (tile.isEmptyGoal()) {
                     return false;
                 }
             }
@@ -229,5 +229,20 @@ public class Level extends Observable {
 
     private void set(Coord c, Tile t) {
         tiles.get(c.getRow()).set(c.getCol(), t);
+    }
+
+    @Override
+    public Level clone() {
+        Level tmp = new Level();
+        tmp.coordPusher = new Coord(coordPusher);
+        tmp.name = name;
+        for (ArrayList<Tile> line : tiles) {
+            tmp.addLine();
+            for (Tile tile : line) {
+                tmp.add(tile.getChar());
+            }
+        }
+
+        return tmp;
     }
 }

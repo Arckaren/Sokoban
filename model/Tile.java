@@ -15,7 +15,7 @@ public enum Tile {
 		this.c = c;
 	}
 
-	char getChar() {
+	public char getChar() {
 		return c;
 	}
 
@@ -45,5 +45,9 @@ public enum Tile {
 		}
 
 		return t;
+	}
+
+	public boolean isEmptyGoal() {
+		return this == Tile.GOAL || this == Tile.PLAYER_GOAL;
 	}
 }
