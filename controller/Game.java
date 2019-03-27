@@ -2,6 +2,8 @@ package controller;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import global.Configuration;
 import javafx.application.Application;
@@ -19,12 +21,13 @@ import model.Coord;
 import model.InvalidMoveException;
 import model.Level;
 import model.LevelReader;
+import model.MoveEvent;
 import model.Tile;
 
 /**
  * Game
  */
-public class Game extends Application {
+public class Game extends Application implements Observer {
 	ArrayList<Level> lvls;
 	int curLvl;
 	VBox vB;
@@ -58,6 +61,19 @@ public class Game extends Application {
 		return stage.getHeight() - buttons.getHeight();
 	}
 
+	Pane getPane(Coord c) {
+		HBox ln = (HBox) vB.getChildren().get(c.getRow());
+		return (Pane) ln.getChildren().get(c.getCol());
+	}
+
+	void move(Coord from, Coord to) {
+		Pane pn = getPane(from);
+		ImageView iv = (ImageView) pn.getChildren().get(pn.getChildren().size() - 1);
+		pn.getChildren().remove(iv);
+		pn = getPane(to);
+		pn.getChildren().add(iv);
+	}
+
 	Pane createPaneForTile(Tile t) {
 		InputStream is = conf.loadImage(Tile.FLOOR);
 		Pane pn = new Pane(new ImageView(new Image(is)));
@@ -81,6 +97,7 @@ public class Game extends Application {
 
 	void drawLevel() {
 		Level l = lvls.get(curLvl);
+		l.addObserver(this);
 		conf.logger().info("Drawing level " + (curLvl + 1) + "/" + lvls.size());
 		vB.getChildren().clear();
 
@@ -100,7 +117,6 @@ public class Game extends Application {
 				System.out.println("Click on position : " + row + "," + col);
 				try {
 					l.movePusher(new Coord(row, col));
-					drawLevel();
 				} catch (InvalidMoveException e) {
 					System.out.println("MAAAAAAAIS: " + e.getMessage());
 				}
@@ -163,6 +179,15 @@ public class Game extends Application {
 
 		drawLevel();
 		primaryStage.show();
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (arg instanceof MoveEvent) {
+			conf.logger().info("MoveEvent received");
+			MoveEvent me = (MoveEvent) arg;
+			move(me.from, me.to);
+		}
 	}
 
 }

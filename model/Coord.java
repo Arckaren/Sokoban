@@ -27,7 +27,7 @@ public class Coord {
 
 	@Override
 	public int hashCode() {
-		return Integer.hashCode(col) * Integer.hashCode(row);
+		return Integer.hashCode(col) * 31 + Integer.hashCode(row);
 	}
 
 	/**

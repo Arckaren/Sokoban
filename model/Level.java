@@ -1,10 +1,12 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Observable;
 
-public class Level {
+import global.Configuration;
+
+public class Level extends Observable {
     /**
      * LevelLoop
      */
@@ -96,42 +98,64 @@ public class Level {
         }
     }
 
-    public Set<Coord> getAccessibles(Coord p) {
-        Set<Coord> pts = new HashSet<>();
+    public HashMap<Coord, Direction> getAccessibles(Coord p) {
+        HashMap<Coord, Direction> pts = new HashMap<>();
         for (Direction d : Direction.values()) {
             if (isAccessible(p, d)) {
-                pts.add(p.addN(d));
+                pts.put(p.addN(d), d);
             }
         }
         return pts;
     }
 
-    public Set<Coord> getAccessibles(int row, int col) {
+    public HashMap<Coord, Direction> getAccessibles(int row, int col) {
         return getAccessibles(new Coord(row, col));
     }
 
-    private void removePusher() {
-        switch (get(coordPusher)) {
+    /**
+     * remove the box or the player in c
+     */
+    private void remove(Coord c) {
+        switch (get(c)) {
         case PLAYER:
-            set(coordPusher, Tile.FLOOR);
+        case BOX:
+            set(c, Tile.FLOOR);
             break;
 
         case PLAYER_GOAL:
-            set(coordPusher, Tile.GOAL);
+        case BOX_GOAL:
+            set(c, Tile.GOAL);
             break;
         default:
             break;
         }
     }
 
-    private void placePusher() {
-        switch (get(coordPusher)) {
+    /**
+     * place box or player t on c
+     * 
+     * @param c
+     * @param t
+     */
+    private void place(Coord c, Tile t) {
+        if (t != Tile.PLAYER && t != Tile.BOX) {
+            throw new IllegalArgumentException("cannot place a " + t);
+        }
+
+        switch (get(c)) {
         case FLOOR:
-            set(coordPusher, Tile.PLAYER);
+            set(c, t);
             break;
 
         case GOAL:
-            set(coordPusher, Tile.PLAYER_GOAL);
+            switch (t) {
+            case BOX:
+                set(c, Tile.BOX_GOAL);
+                break;
+            case PLAYER:
+                set(c, Tile.PLAYER_GOAL);
+                break;
+            }
             break;
         default:
             break;
@@ -140,19 +164,29 @@ public class Level {
 
     public void movePusher(Direction d) {
         if (isAccessible(getCoordPusher(), d)) {
-            removePusher();
+            remove(coordPusher);
+            Coord oldPusher = new Coord(coordPusher);
             coordPusher.add(d);
-            placePusher();
+            if (get(coordPusher).isBox()) {
+                Configuration.getInstance().logger().info("push a box!!!");
+                remove(coordPusher);
+                Coord to = coordPusher.addN(d);
+                place(to, Tile.BOX);
+                setChanged();
+                notifyObservers(new MoveEvent(coordPusher, to));
+            }
+            place(coordPusher, Tile.PLAYER);
+            setChanged();
+            notifyObservers(new MoveEvent(oldPusher, coordPusher));
         } else {
             throw new InvalidMoveException(coordPusher, coordPusher.addN(d));
         }
     }
 
     public void movePusher(Coord c) {
-        if (getAccessibles(getCoordPusher()).contains(c)) {
-            removePusher();
-            coordPusher = c;
-            placePusher();
+        HashMap<Coord, Direction> m = getAccessibles(getCoordPusher());
+        if (m.containsKey(c)) {
+            movePusher(m.get(c));
         } else {
             throw new InvalidMoveException(coordPusher, c);
         }
