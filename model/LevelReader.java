@@ -43,7 +43,7 @@ public class LevelReader {
                     // on est arrivé à la fin
                 } else {
                     lvl.fixName(line.substring(1).trim());
-                    lvl.finishLevel();
+                    lvl.finishLevelEdit();
                     // sinon on rajoute le nom
                     file.nextLine();
                 }

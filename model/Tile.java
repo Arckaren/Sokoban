@@ -19,6 +19,10 @@ public enum Tile {
 		return c;
 	}
 
+	boolean isBox() {
+		return this == BOX || this == BOX_GOAL;
+	}
+
 	/**
 	 * @return the img
 	 */

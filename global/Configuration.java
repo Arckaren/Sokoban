@@ -58,7 +58,7 @@ public class Configuration {
 	}
 
 	public InputStream loadImage(Tile t) {
-		// logger().info("laoding: " + "Images/" + get(t.getImgLabel()));
+		// logger().info("loading: " + "Images/" + get(t.getImgLabel()));
 		return load("Images/" + get(t.getImgLabel()));
 	}
 

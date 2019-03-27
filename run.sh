@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
 ./build.sh
-java Game
+java controller.Game
+rm *.class **/*.class

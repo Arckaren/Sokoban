@@ -175,7 +175,6 @@ public class ExempleJavaFXAvecCanvas extends Application {
 		// taille nulle qui est transmise au Canvas
 		can.widthProperty().bind(vue.widthProperty());
 		can.heightProperty().bind(vue.heightProperty());
-
 		// Petit message dans la console quand la fenetre est fermée
 		primaryStage.setOnCloseRequest(we -> System.out.println("Fin du jeu"));
 	}

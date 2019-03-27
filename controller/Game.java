@@ -1,3 +1,4 @@
+package controller;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import model.Coord;
+import model.InvalidMoveException;
 import model.Level;
 import model.LevelReader;
 import model.Tile;
@@ -77,7 +80,6 @@ public class Game extends Application {
 	}
 
 	void drawLevel() {
-
 		Level l = lvls.get(curLvl);
 		conf.logger().info("Drawing level " + (curLvl + 1) + "/" + lvls.size());
 		vB.getChildren().clear();
@@ -95,7 +97,13 @@ public class Game extends Application {
 
 			((HBox) vB.getChildren().get(vB.getChildren().size() - 1)).getChildren().add(pn);
 			pn.setOnMouseClicked(event -> {
-				System.out.println("Click on position : " + col + "," + row);
+				System.out.println("Click on position : " + row + "," + col);
+				try {
+					l.movePusher(new Coord(row, col));
+					drawLevel();
+				} catch (InvalidMoveException e) {
+					System.out.println("MAAAAAAAIS: " + e.getMessage());
+				}
 			});
 		});
 
